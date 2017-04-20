@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(ggplot2)
+x<-seq(0,1,length.out = 200)
+
+df=data.frame(x=x,y=dbeta(x,3,7))
+
+g<-ggplot(data=df,aes(x=x,y=y))+
+  geom_point()+
+  geom_line()
+
+print(g)
+
+```
+
+## a randomly generated test set
+
+- length 200, 300 miss, 100 non,50 sil observed.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+missense=data.frame(x=sample(200,300,replace=T),type="mis",stringsAsFactors = FALSE)
+nonsense=data.frame(x=sample(200,100,replace=T),type="non",stringsAsFactors = FALSE)
+silent=data.frame(x=sample(200,50,replace=T),type="sil",stringsAsFactors = FALSE)
+
+maf<-rbind(missense,nonsense,silent)
+
+maf.summ<-maf %>% group_by(x,type) %>% summarise(recur=n()) 
+g<-ggplot(data=maf.summ,aes(x=x,y=recur))+
+  geom_point(aes(colour=type),alpha=1)+
+  geom_segment(aes(xend=x,yend=0))+
+  facet_grid(facets= type ~ .)
+print(g)
+
+
+```
+
